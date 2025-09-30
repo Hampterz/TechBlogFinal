@@ -18,21 +18,35 @@ export default defineConfig(({ mode }) => ({
           vendor: ['react', 'react-dom'],
           router: ['react-router-dom'],
           motion: ['framer-motion'],
-          ui: ['lucide-react', '@radix-ui/react-slot']
+          ui: ['lucide-react', '@radix-ui/react-slot'],
+          charts: ['recharts', 'd3'],
+          three: ['three', 'ogl', 'postprocessing']
         }
       }
-    }
+    },
+    // Ensure proper asset handling for Azure
+    assetsDir: 'assets',
+    emptyOutDir: true
   },
   plugins: [tsconfigPaths(), react(), tagger()],
   server: {
-    port: "4028",
+    port: 4028,
     host: "0.0.0.0",
     strictPort: true,
-    allowedHosts: ['.amazonaws.com', '.builtwithrocket.new', '.vercel.app', '.netlify.app']
+    allowedHosts: ['.amazonaws.com', '.builtwithrocket.new', '.vercel.app', '.netlify.app', '.azurestaticapps.net'],
+    // Enable CORS for development
+    cors: true
   },
   preview: {
     port: 3000,
-    host: "0.0.0.0"
+    host: "0.0.0.0",
+    cors: true
   },
-  // base: mode === 'production' ? '/' : '/'
+  // Ensure proper base path for Azure Static Web Apps
+  base: mode === 'production' ? '/' : '/',
+  // Define environment variables
+  define: {
+    __APP_VERSION__: JSON.stringify(process.env.npm_package_version || '1.0.0'),
+    __BUILD_TIME__: JSON.stringify(new Date().toISOString())
+  }
 }));

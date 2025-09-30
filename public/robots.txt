@@ -1,0 +1,21 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+
+# Disallow admin and secret routes
+Disallow: /admin/
+Disallow: /secret/
+Disallow: /api/
+
+# Allow all other content
+Allow: /homepage-technical-portfolio-showcase
+Allow: /project-deep-dive-raspberry-pi-nas-case-study
+Allow: /technical-knowledge-hub
+Allow: /interactive-skills-matrix
+Allow: /tutorials/
+
+# Sitemap location (update with your actual domain)
+Sitemap: https://your-domain.com/sitemap.xml
+
+# Crawl delay (optional)
+Crawl-delay: 1

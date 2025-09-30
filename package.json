@@ -64,9 +64,18 @@
     "dev": "vite",
     "build": "vite build",
     "build:prod": "vite build --mode production",
+    "build:analyze": "vite build --mode production && npx vite-bundle-analyzer build",
     "preview": "vite preview",
     "serve": "vite preview --port 3000",
-    "deploy": "npm run build && npm run serve"
+    "deploy": "npm run build && npm run serve",
+    "deploy:azure": "npm run build && echo 'Build complete. Deploy the build folder to Azure Static Web Apps.'",
+    "deploy:vercel": "npm run build && vercel --prod",
+    "deploy:netlify": "npm run build && netlify deploy --prod --dir=build",
+    "lint": "eslint src --ext .js,.jsx --fix",
+    "format": "prettier --write src/**/*.{js,jsx,css,md}",
+    "test": "echo 'No tests specified' && exit 0",
+    "clean": "rm -rf build dist node_modules/.vite",
+    "preinstall": "npx only-allow npm"
   },
   "eslintConfig": {
     "extends": [

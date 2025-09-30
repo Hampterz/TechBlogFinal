@@ -160,23 +160,44 @@ This project taught me more about practical systems administration than any tuto
   // Load content from localStorage or use defaults
   const [content, setContent] = useState(() => {
     try {
-      // Clear old cached content to force refresh
-      localStorage.removeItem('portfolio-content');
-      const savedContent = localStorage.getItem('portfolio-content');
-      return savedContent ? { ...defaultContent, ...JSON.parse(savedContent) } : defaultContent;
+      // Only load from localStorage in browser environment
+      if (typeof window !== 'undefined') {
+        const savedContent = localStorage.getItem('portfolio-content');
+        if (savedContent) {
+          const parsedContent = JSON.parse(savedContent);
+          // Merge with defaults to ensure all required fields exist
+          return { ...defaultContent, ...parsedContent };
+        }
+      }
+      return defaultContent;
     } catch (error) {
       console.error('Error loading saved content:', error);
+      // Clear corrupted data
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('portfolio-content');
+      }
       return defaultContent;
     }
   });
 
-  // Save content to localStorage whenever it changes
+  // Save content to localStorage whenever it changes (with debouncing)
   useEffect(() => {
-    try {
-      localStorage.setItem('portfolio-content', JSON.stringify(content));
-    } catch (error) {
-      console.error('Error saving content:', error);
-    }
+    if (typeof window === 'undefined') return;
+    
+    const timeoutId = setTimeout(() => {
+      try {
+        localStorage.setItem('portfolio-content', JSON.stringify(content));
+      } catch (error) {
+        console.error('Error saving content:', error);
+        // Handle storage quota exceeded
+        if (error.name === 'QuotaExceededError') {
+          console.warn('LocalStorage quota exceeded, clearing old data');
+          localStorage.clear();
+        }
+      }
+    }, 500); // Debounce saves by 500ms
+
+    return () => clearTimeout(timeoutId);
   }, [content]);
 
   // Project management functions
